@@ -1,0 +1,64 @@
+= React für Anfänger
+:project-name: react-session
+
+== Vorbedingungen
+
+.Abhängigkeiten
+* NodeJS
+* IDE?
+
+== Erste Schritte
+
+=== Projekt aufsetzen
+
+.SkelettProjekt erzeugen
+[subs="attributes+"]
+npx create-react-app {project-name} --template typescript
+
+.Devserver starten
+[subs="attributes+"]
+cd {project-name}
+npm start
+
+=== Warum Create React App?
+
+.+:
+* Schnelles Scaffolding
+* Build-Script included
+* dev-server, linter, test-runner... included
+
+.-
+* Customizing schwierig ohne 'eject' (z.B. webpack config, ...)
+* Nur Single Page Application
+
+=== Projekt Struktur
+
+==== Top Level Files
+
+gitignore::
+Für git ignores... :)
+
+package.json::
+Informationen über das Projekt.
+Hier werden Dependencies deklariert und scripts (z.B. start, build) definiert.
+
+package-lock.json::
+Lockfile für Dependencies
+
+README.md::
+Ein readme file...
+
+tsconfig.json::
+Konfiguration für den typescript compiler (tsc)
+
+==== public
+
+Beinhaltet statische Assets.
+
+[IMPORTANT]
+Hier liegt auch die ausgelieferte index.html
+
+==== src
+
+Source Code für die Anwendung.
+Beinhaltet Javascript und dynamische Ressourcen.

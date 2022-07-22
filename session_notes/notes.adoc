@@ -1,6 +1,7 @@
 = React für Anfänger
 :project-name: react-session
 :todos-url: https://jsonplaceholder.typicode.com/todos
+:source-highlighter:rouge
 
 == Vorbedingungen
 
@@ -75,3 +76,26 @@ Gerne mal mit `App.tsx` spielen oder auch 2x einbinden.
 
 setupTests.ts::
 Setup File für Test Runner.
+
+== Hands On
+
+Wir bauen eine ToDo-App :).
+Dazu erstmal `src` etwas aufräumen.
+
+.Kann weg:
+* App.css
+* App.test.tsx
+* logo.svg
+
+Und App.tsx leeren:
+
+[,typescript]
+----
+export default function App() {
+  return <></>;
+}
+----
+
+Optional: Code Formatter installieren und einrichten.
+
+ npm i prettier

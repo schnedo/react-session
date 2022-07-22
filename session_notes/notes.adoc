@@ -275,3 +275,116 @@ export default function TodoList({ todos }: TodoListProps) {
   );
 }
 ----
+
+=== Hooks
+
+Bisher keine Interaktivität.
+Wir wollen, dass klick auf checkbox den die Aufgabe als abgeschlossen markiert.
+Die App braucht sowas wie einen Zustand.
+
+==== useState
+
+Hinzufügen von State zu `App.tsx`
+
+.App.tsx
+----
+import Todo from "./todos/Todo";
+import TodoList from "./todos/TodoList";
+import { useState } from "react";
+
+const initialTodos: Todo[] = [
+  {
+    id: 1,
+    title: "Wichtige Dinge tun",
+    completed: false,
+  },
+  {
+    id: 2,
+    title: "Lustige Dinge tun",
+    completed: true,
+  },
+];
+
+export default function App() {
+  const [todos, setTodos] = useState(initialTodos);
+
+  return <TodoList todos={todos} />;
+}
+----
+
+Eventhandler an den Komponenten hinzufügen
+
+.App.tsx
+----
+export default function App() {
+  const [todos, setTodos] = useState(initialTodos);
+
+  const handleTodoCompletedClicked = (id: Todo["id"]) =>
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id
+          ? {
+            ...todo,
+            completed: !todo.completed,
+          }
+          : todo
+      )
+    );
+
+  return (
+    <TodoList
+      todos={todos}
+      onTodoCompletedClicked={handleTodoCompletedClicked}
+    />
+  );
+}
+----
+
+.TodoList.tsx
+----
+interface TodoListProps {
+  todos: Todo[];
+  onTodoCompletedClicked: (todoId: Todo["id"]) => unknown;
+}
+
+export default function TodoList({
+  todos,
+  onTodoCompletedClicked,
+}: TodoListProps) {
+  return (
+    <div>
+      <div>Todos</div>
+      <BorderedBox>
+        {todos.map((todo) => (
+          <TodoItem
+            key={todo.id}
+            todo={todo}
+            onCheckboxClick={() => onTodoCompletedClicked(todo.id)}
+          />
+        ))}
+      </BorderedBox>
+    </div>
+  );
+}
+----
+
+.TodoItem.tsx
+----
+interface TodoItemProps {
+  todo: Todo;
+  onCheckboxClick: () => unknown;
+}
+
+export default function TodoItem({ todo, onCheckboxClick }: TodoItemProps) {
+  return (
+    <div>
+      <input
+        type={"checkbox"}
+        checked={todo.completed}
+        onClick={onCheckboxClick}
+      />
+      <span>{todo.title}</span>
+    </div>
+  );
+}
+----

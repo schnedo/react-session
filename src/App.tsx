@@ -1,7 +1,8 @@
 import Todo from "./todos/Todo";
 import TodoList from "./todos/TodoList";
+import { useState } from "react";
 
-const todos: Todo[] = [
+const initialTodos: Todo[] = [
   {
     id: 1,
     title: "Wichtige Dinge tun",
@@ -15,5 +16,24 @@ const todos: Todo[] = [
 ];
 
 export default function App() {
-  return <TodoList todos={todos} />;
+  const [todos, setTodos] = useState(initialTodos);
+
+  const handleTodoCompletedClicked = (id: Todo["id"]) =>
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id
+          ? {
+            ...todo,
+            completed: !todo.completed,
+          }
+          : todo
+      )
+    );
+
+  return (
+    <TodoList
+      todos={todos}
+      onTodoCompletedClicked={handleTodoCompletedClicked}
+    />
+  );
 }

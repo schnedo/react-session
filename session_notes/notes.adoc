@@ -1,7 +1,8 @@
 = React für Anfänger
 :project-name: react-session
 :todos-url: https://jsonplaceholder.typicode.com/todos
-:source-highlighter:rouge
+:source-highlighter: rouge
+:source-language: typescript
 
 == Vorbedingungen
 
@@ -89,7 +90,6 @@ Dazu erstmal `src` etwas aufräumen.
 
 Und App.tsx leeren:
 
-[,typescript]
 ----
 export default function App() {
   return <></>;
@@ -99,3 +99,74 @@ export default function App() {
 Optional: Code Formatter installieren und einrichten.
 
  npm i prettier
+
+=== Todo
+
+Interface `src/todos/Todo.ts` definieren:
+
+----
+export default interface Todo {
+  id: number;
+  title: string;
+  completed: boolean;
+}
+----
+
+Komponente `src/todos/TodoItem.tsx` definieren:
+
+----
+import Todo from "./Todo";
+
+interface TodoItemProps {
+  todo: Todo;
+}
+
+export default function TodoItem({ todo }: TodoItemProps) {
+  return <></>;
+}
+----
+
+und in App.tsx anziehen:
+
+----
+import Todo from "./todos/Todo";
+import TodoItem from "./todos/TodoItem";
+
+const todo: Todo = {
+  id: 1,
+  title: "Wichtige Dinge tun",
+  completed: false,
+};
+
+export default function App() {
+  return <TodoItem todo={todo} />;
+}
+----
+
+Dev Server sollte jetzt immer noch weißes Bild zeigen.
+Noch rendert `TodoItem` nichts.
+
+Etwas hübschere Variante (ohne Respekt für a11y oder html Semantik)
+
+----
+import Todo from "./Todo";
+import { CSSProperties } from "react";
+
+const containerStyle: CSSProperties = {
+  display: "flex",
+  flexDirection: "row",
+};
+
+interface TodoItemProps {
+  todo: Todo;
+}
+
+export default function TodoItem({ todo }: TodoItemProps) {
+  return (
+    <div style={containerStyle}>
+      <input type={"checkbox"} checked={todo.completed} />
+      <div>{todo.title}</div>
+    </div>
+  );
+}
+----

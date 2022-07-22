@@ -233,3 +233,45 @@ export default function TodoList({ todos }: TodoListProps) {
 
 `key` Property ist bei Mapping von Komponenten über Listen notwendig (siehe warning in console).
 Anhand von `key` kann React die verschiedenen Komponenten unterscheiden und entscheiden, welche bei Bedarf neu gerendert werden müssen.
+
+=== children prop
+
+Komponente für "schönen" Rahmen um beliebige Komponente.
+
+.BorderedBox.tsx
+----
+import React, { CSSProperties, ReactNode } from "react";
+
+const borderedBoxStyle: CSSProperties = {
+  border: "solid black 5px",
+  borderRadius: "5px",
+};
+
+interface BorderedBoxProps {
+  children: ReactNode;
+}
+
+export default function BorderedBox({ children }: BorderedBoxProps) {
+  return <div style={borderedBoxStyle}>{children}</div>;
+}
+----
+
+`children` ist eine besondere prop in dem Sinne, dass sie nicht "als Attribut" gesetzt werden muss, sondern auch durch den Content zwischen öffnendem und schließendem Tag befüllt werden kann.
+
+Einfügen in TodoList:
+
+.TodoList.tsx
+----
+export default function TodoList({ todos }: TodoListProps) {
+  return (
+    <div>
+      <div>Todos</div>
+      <BorderedBox>
+        {todos.map((todo) => (
+          <TodoItem key={todo.id} todo={todo} />
+        ))}
+      </BorderedBox>
+    </div>
+  );
+}
+----

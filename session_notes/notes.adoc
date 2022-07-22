@@ -100,7 +100,7 @@ Optional: Code Formatter installieren und einrichten.
 
  npm i prettier
 
-=== Todo
+=== Die erste eigene Komponente
 
 Interface `src/todos/Todo.ts` definieren:
 
@@ -170,3 +170,66 @@ export default function TodoItem({ todo }: TodoItemProps) {
   );
 }
 ----
+
+=== Mapping über Datenliste
+
+Bisher geht nur 1 Todo.
+Daher für mehrere Todos eigene Komponente `src/todos/TodoList.tsx`.
+
+.TodoList.tsx
+----
+import React from "react";
+import Todo from "./Todo";
+
+interface TodoListProps {
+  todos: Todo[];
+}
+
+export default function TodoList({ todos }: TodoListProps) {
+  return <div></div>;
+}
+----
+
+und in App.tsx:
+
+.App.tsx
+----
+import Todo from "./todos/Todo";
+import TodoList from "./todos/TodoList";
+
+const todos: Todo[] = [
+  {
+    id: 1,
+    title: "Wichtige Dinge tun",
+    completed: false,
+  },
+  {
+    id: 2,
+    title: "Lustige Dinge tun",
+    completed: true,
+  },
+];
+
+export default function App() {
+  return <TodoList todos={todos} />;
+}
+----
+
+TodoList ausgestalten:
+
+.TodoList.tsx
+----
+export default function TodoList({ todos }: TodoListProps) {
+  return (
+    <div>
+      <div>Todos</div>
+      {todos.map((todo) => (
+        <TodoItem key={todo.id} todo={todo} />
+      ))}
+    </div>
+  );
+}
+----
+
+`key` Property ist bei Mapping von Komponenten über Listen notwendig (siehe warning in console).
+Anhand von `key` kann React die verschiedenen Komponenten unterscheiden und entscheiden, welche bei Bedarf neu gerendert werden müssen.

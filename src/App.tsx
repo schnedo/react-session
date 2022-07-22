@@ -1,12 +1,19 @@
 import Todo from "./todos/Todo";
-import TodoItem from "./todos/TodoItem";
+import TodoList from "./todos/TodoList";
 
-const todo: Todo = {
-  id: 1,
-  title: "Wichtige Dinge tun",
-  completed: false,
-};
+const todos: Todo[] = [
+  {
+    id: 1,
+    title: "Wichtige Dinge tun",
+    completed: false,
+  },
+  {
+    id: 2,
+    title: "Lustige Dinge tun",
+    completed: true,
+  },
+];
 
 export default function App() {
-  return <TodoItem todo={todo} />;
+  return <TodoList todos={todos} />;
 }

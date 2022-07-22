@@ -1,5 +1,6 @@
 = React für Anfänger
 :project-name: react-session
+:todos-url: https://jsonplaceholder.typicode.com/todos
 
 == Vorbedingungen
 
@@ -56,9 +57,21 @@ Konfiguration für den typescript compiler (tsc)
 Beinhaltet statische Assets.
 
 [IMPORTANT]
-Hier liegt auch die ausgelieferte index.html
+Hier liegt auch die ausgelieferte index.html.
 
 ==== src
 
 Source Code für die Anwendung.
 Beinhaltet Javascript und dynamische Ressourcen.
+
+index.tsx::
+Entry-point von CRA-Apps.
+Hier wird die App per `ReeactDOM.createRoot(...)` ins DOM eingehängt (bzw. `ReactDOM.render(...)` in React < 18).
+
+App.*::
+Gehören zur `App.tsx` Komponente.
+Der Gedanke bei Komponenten ist, zusammengehörigen Code in einer wiederverwendbaren Weise zu bündeln.
+Gerne mal mit `App.tsx` spielen oder auch 2x einbinden.
+
+setupTests.ts::
+Setup File für Test Runner.

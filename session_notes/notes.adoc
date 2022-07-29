@@ -174,213 +174,98 @@ Bisher geht nur 1 Todo, nicht wirklich hilfreich.
 Daher als nächstes mehrere todos:
 
 ----
-import React from "react";
-import Todo from "./Todo";
-
-interface TodoListProps {
-  todos: Todo[];
-}
-
-export default function TodoList({ todos }: TodoListProps) {
-  return <div></div>;
-}
-----
-
-und in App.tsx:
-
-.App.tsx
-----
-import Todo from "./todos/Todo";
-import TodoList from "./todos/TodoList";
-
-const todos: Todo[] = [
+const todos = [
   {
     id: 1,
     title: "Wichtige Dinge tun",
-    completed: false,
+    completed: true,
   },
   {
     id: 2,
     title: "Lustige Dinge tun",
-    completed: true,
+    completed: false,
   },
 ];
-
-export default function App() {
-  return <TodoList todos={todos} />;
-}
 ----
 
-TodoList ausgestalten:
+und TodoList anpassen:
 
-.TodoList.tsx
 ----
-export default function TodoList({ todos }: TodoListProps) {
+export default function TodoList() {
   return (
-    <div>
-      <div>Todos</div>
+    <List>
       {todos.map((todo) => (
-        <TodoItem key={todo.id} todo={todo} />
+        <ListItem
+          key={todo.id}
+          secondaryAction={<Checkbox checked={todo.completed} />}
+        >
+          <ListItemText primary={todo.title} />
+        </ListItem>
       ))}
-    </div>
+    </List>
   );
 }
 ----
 
 `key` Property ist bei Mapping von Komponenten über Listen notwendig (siehe warning in console).
-Anhand von `key` kann React die verschiedenen Komponenten unterscheiden und entscheiden, welche bei Bedarf neu gerendert werden müssen.
-
-=== children prop
-
-Komponente für "schönen" Rahmen um beliebige Komponente.
-
-.BorderedBox.tsx
-----
-import React, { CSSProperties, ReactNode } from "react";
-
-const borderedBoxStyle: CSSProperties = {
-  border: "solid black 5px",
-  borderRadius: "5px",
-};
-
-interface BorderedBoxProps {
-  children: ReactNode;
-}
-
-export default function BorderedBox({ children }: BorderedBoxProps) {
-  return <div style={borderedBoxStyle}>{children}</div>;
-}
-----
-
-`children` ist eine besondere prop in dem Sinne, dass sie nicht "als Attribut" gesetzt werden muss, sondern auch durch den Content zwischen öffnendem und schließendem Tag befüllt werden kann.
-
-Einfügen in TodoList:
-
-.TodoList.tsx
-----
-export default function TodoList({ todos }: TodoListProps) {
-  return (
-    <div>
-      <div>Todos</div>
-      <BorderedBox>
-        {todos.map((todo) => (
-          <TodoItem key={todo.id} todo={todo} />
-        ))}
-      </BorderedBox>
-    </div>
-  );
-}
-----
+Anhand von `key` kann React die verschiedenen Komponenten unterscheiden und entscheiden, welche bei Bedarf neu gerendert werden müssen (see https://reactjs.org/docs/lists-and-keys.html).
 
 === Hooks
 
 Bisher keine Interaktivität.
 Wir wollen, dass klick auf checkbox den die Aufgabe als abgeschlossen markiert.
-Die App braucht sowas wie einen Zustand.
+Die Liste braucht Zustand.
 
 ==== useState
 
-Hinzufügen von State zu `App.tsx`
+Hinzufügen von State zu `TodoList.tsx`
 
-.App.tsx
 ----
-import Todo from "./todos/Todo";
-import TodoList from "./todos/TodoList";
-import { useState } from "react";
+import React, { useState } from "react";
+import { Checkbox, List, ListItem, ListItemText } from "@mui/material";
 
-const initialTodos: Todo[] = [
+const initialTodos = [
   {
     id: 1,
     title: "Wichtige Dinge tun",
-    completed: false,
+    completed: true,
   },
   {
     id: 2,
     title: "Lustige Dinge tun",
-    completed: true,
+    completed: false,
   },
 ];
 
-export default function App() {
+export default function TodoList() {
   const [todos, setTodos] = useState(initialTodos);
 
-  return <TodoList todos={todos} />;
-}
-----
-
-Eventhandler an den Komponenten hinzufügen
-
-.App.tsx
-----
-export default function App() {
-  const [todos, setTodos] = useState(initialTodos);
-
-  const handleTodoCompletedClicked = (id: Todo["id"]) =>
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id
-          ? {
-            ...todo,
-            completed: !todo.completed,
-          }
-          : todo
-      )
-    );
-
   return (
-    <TodoList
-      todos={todos}
-      onTodoCompletedClicked={handleTodoCompletedClicked}
-    />
+    <List>
+      {todos.map((todo) => (
+        <ListItem
+          key={todo.id}
+          secondaryAction={<Checkbox checked={todo.completed} />}
+        >
+          <ListItemText primary={todo.title} />
+        </ListItem>
+      ))}
+    </List>
   );
 }
 ----
 
-.TodoList.tsx
-----
-interface TodoListProps {
-  todos: Todo[];
-  onTodoCompletedClicked: (todoId: Todo["id"]) => unknown;
-}
+Wir brauchen noch einen Eventhandler:
 
-export default function TodoList({
-  todos,
-  onTodoCompletedClicked,
-}: TodoListProps) {
-  return (
-    <div>
-      <div>Todos</div>
-      <BorderedBox>
-        {todos.map((todo) => (
-          <TodoItem
-            key={todo.id}
-            todo={todo}
-            onCheckboxClick={() => onTodoCompletedClicked(todo.id)}
-          />
-        ))}
-      </BorderedBox>
-    </div>
-  );
-}
+----
+  const handleChange = (index: number) => () => {
+    const newTodos = [...todos];
+    const changedTodo = newTodos[index];
+    changedTodo.completed = !changedTodo.completed;
+    setTodos(newTodos);
+  };
 ----
 
-.TodoItem.tsx
 ----
-interface TodoItemProps {
-  todo: Todo;
-  onCheckboxClick: () => unknown;
-}
-
-export default function TodoItem({ todo, onCheckboxClick }: TodoItemProps) {
-  return (
-    <div>
-      <input
-        type={"checkbox"}
-        checked={todo.completed}
-        onClick={onCheckboxClick}
-      />
-      <span>{todo.title}</span>
-    </div>
-  );
-}
+            <Checkbox checked={todo.completed} onChange={handleChange(index)} />
 ----

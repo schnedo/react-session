@@ -471,3 +471,5 @@ export default function App() {
   );
 }
 ----
+
+// Write own Component?

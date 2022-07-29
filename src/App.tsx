@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import {
+  AppBar,
   Checkbox,
   CircularProgress,
   Fab,
   List,
   ListItem,
   ListItemText,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
 
@@ -53,20 +56,38 @@ export default function App() {
   };
 
   return (
-    <List>
-      <Fab color={"primary"} onClick={handleAdd}>
+    <>
+      <AppBar position={"sticky"}>
+        <Toolbar>
+          <Typography>Todo</Typography>
+        </Toolbar>
+      </AppBar>
+      <List>
+        {todos.map((todo, index) => (
+          <ListItem
+            key={todo.id}
+            secondaryAction={
+              <Checkbox
+                checked={todo.completed}
+                onChange={handleChange(index)}
+              />
+            }
+          >
+            <ListItemText primary={todo.title} />
+          </ListItem>
+        ))}
+      </List>
+      <Fab
+        sx={{
+          position: "fixed",
+          bottom: 10,
+          right: 10,
+        }}
+        color={"primary"}
+        onClick={handleAdd}
+      >
         <Add />
       </Fab>
-      {todos.map((todo, index) => (
-        <ListItem
-          key={todo.id}
-          secondaryAction={
-            <Checkbox checked={todo.completed} onChange={handleChange(index)} />
-          }
-        >
-          <ListItemText primary={todo.title} />
-        </ListItem>
-      ))}
-    </List>
+    </>
   );
 }

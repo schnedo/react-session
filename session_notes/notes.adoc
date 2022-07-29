@@ -239,6 +239,35 @@ export default function App() {
 }
 ----
 
+Add Button hinzufügen:
+
+----
+  const handleAdd = () => {
+    setTodos([
+      { id: todos.length + 1, title: "foo", completed: false },
+      ...todos,
+    ]);
+  };
+
+  return (
+    <List>
+      <Fab color={"primary"} onClick={handleAdd}>
+        <Add />
+      </Fab>
+      {todos.map((todo, index) => (
+        <ListItem
+          key={todo.id}
+          secondaryAction={
+            <Checkbox checked={todo.completed} />
+          }
+        >
+          <ListItemText primary={todo.title} />
+        </ListItem>
+      ))}
+    </List>
+  );
+----
+
 ===== Toggle Completed
 
 Wir brauchen einen Eventhandler:

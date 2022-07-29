@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import {
   Checkbox,
   CircularProgress,
+  Fab,
   List,
   ListItem,
   ListItemText,
 } from "@mui/material";
+import { Add } from "@mui/icons-material";
 
 interface Todo {
   id: number;
@@ -43,8 +45,18 @@ export default function App() {
     setTodos(newTodos);
   };
 
+  const handleAdd = () => {
+    setTodos([
+      { id: todos.length + 1, title: "foo", completed: false },
+      ...todos,
+    ]);
+  };
+
   return (
     <List>
+      <Fab color={"primary"} onClick={handleAdd}>
+        <Add />
+      </Fab>
       {todos.map((todo, index) => (
         <ListItem
           key={todo.id}

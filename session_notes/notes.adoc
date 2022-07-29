@@ -100,28 +100,19 @@ Optional: Code Formatter installieren und einrichten.
 
  npm i prettier
 
-=== Die erste eigene Komponente
+=== Todo Liste
 
-Interface `src/todos/Todo.ts` definieren:
+Wir wollen schnell etwas halbwegs Schönes erstellen.
+Deshalb nutzen wir eine Komponentenbibliothek.
+Wir benutzen hier material-ui (https://mui.com/)
 
-----
-export default interface Todo {
-  id: number;
-  title: string;
-  completed: boolean;
-}
-----
+  npm install @mui/material @emotion/react @emotion/styled
 
-Komponente `src/todos/TodoItem.tsx` definieren:
+Komponente `src/todos/TodoList.tsx` erstellen.
+Zuerst ein Dummy für die Listenkomponente selbst:
 
 ----
-import Todo from "./Todo";
-
-interface TodoItemProps {
-  todo: Todo;
-}
-
-export default function TodoItem({ todo }: TodoItemProps) {
+export default function TodoList() {
   return <></>;
 }
 ----
@@ -129,54 +120,59 @@ export default function TodoItem({ todo }: TodoItemProps) {
 und in App.tsx anziehen:
 
 ----
-import Todo from "./todos/Todo";
-import TodoItem from "./todos/TodoItem";
-
-const todo: Todo = {
-  id: 1,
-  title: "Wichtige Dinge tun",
-  completed: false,
-};
+import TodoList from "./todos/TodoList";
 
 export default function App() {
-  return <TodoItem todo={todo} />;
+  return <TodoList />;
 }
 ----
 
 Dev Server sollte jetzt immer noch weißes Bild zeigen.
-Noch rendert `TodoItem` nichts.
+TodoList rendert ein React.Fragment und damit nichts.
 
-Etwas hübschere Variante (ohne Respekt für a11y oder html Semantik)
+Wir definieren ein dummy Todo:
 
 ----
-import Todo from "./Todo";
-import { CSSProperties } from "react";
-
-const containerStyle: CSSProperties = {
-  display: "flex",
-  flexDirection: "row",
+const todo = {
+  id: 1,
+  title: "Wichtige Dinge tun",
+  completed: true,
 };
+----
 
-interface TodoItemProps {
-  todo: Todo;
-}
+und zeigen etwas in der Liste an:
 
-export default function TodoItem({ todo }: TodoItemProps) {
+----
+export default function TodoList() {
   return (
-    <div style={containerStyle}>
-      <input type={"checkbox"} checked={todo.completed} />
-      <div>{todo.title}</div>
-    </div>
+    <List>
+      <ListItem>
+        <ListItemText primary={todo.title} />
+      </ListItem>
+    </List>
+  );
+}
+----
+
+Fehlt noch eine Anzeige für `todo.completed`:
+
+----
+export default function TodoList() {
+  return (
+    <List>
+      <ListItem secondaryAction={<Checkbox checked={todo.completed} />}>
+        <ListItemText primary={todo.title} />
+      </ListItem>
+    </List>
   );
 }
 ----
 
 === Mapping über Datenliste
 
-Bisher geht nur 1 Todo.
-Daher für mehrere Todos eigene Komponente `src/todos/TodoList.tsx`.
+Bisher geht nur 1 Todo, nicht wirklich hilfreich.
+Daher als nächstes mehrere todos:
 
-.TodoList.tsx
 ----
 import React from "react";
 import Todo from "./Todo";

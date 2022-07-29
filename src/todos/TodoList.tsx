@@ -1,29 +1,18 @@
 import React from "react";
-import Todo from "./Todo";
-import TodoItem from "./TodoItem";
-import BorderedBox from "../components/BorderedBox";
+import { Checkbox, List, ListItem, ListItemText } from "@mui/material";
 
-interface TodoListProps {
-  todos: Todo[];
-  onTodoCompletedClicked: (todoId: Todo["id"]) => unknown;
-}
+const todo = {
+  id: 1,
+  title: "Wichtige Dinge tun",
+  completed: true,
+};
 
-export default function TodoList({
-  todos,
-  onTodoCompletedClicked,
-}: TodoListProps) {
+export default function TodoList() {
   return (
-    <div>
-      <div>Todos</div>
-      <BorderedBox>
-        {todos.map((todo) => (
-          <TodoItem
-            key={todo.id}
-            todo={todo}
-            onCheckboxClick={() => onTodoCompletedClicked(todo.id)}
-          />
-        ))}
-      </BorderedBox>
-    </div>
+    <List>
+      <ListItem secondaryAction={<Checkbox checked={todo.completed} />}>
+        <ListItemText primary={todo.title} />
+      </ListItem>
+    </List>
   );
 }

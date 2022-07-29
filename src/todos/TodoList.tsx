@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Checkbox, List, ListItem, ListItemText } from "@mui/material";
+import {
+  Checkbox,
+  CircularProgress,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 
 interface Todo {
   id: number;
@@ -16,13 +22,19 @@ async function fetchTodos(): Promise<Todo[]> {
 }
 
 export default function TodoList() {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [todos, setTodos] = useState<Todo[]>();
 
   useEffect(() => {
-    fetchTodos()
-      .then(setTodos)
-      .catch((e) => console.log(e));
-  });
+    if (todos === undefined) {
+      fetchTodos()
+        .then(setTodos)
+        .catch((e) => console.log(e));
+    }
+  }, [todos]);
+
+  if (todos === undefined) {
+    return <CircularProgress />;
+  }
 
   const handleChange = (index: number) => () => {
     const newTodos = [...todos];

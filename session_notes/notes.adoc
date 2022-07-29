@@ -300,7 +300,47 @@ Und als Seiteneffekt einbinden:
 
 Jetzt sollten beim Rendern der Komponente die Todos vom Backend geladen werden.
 
-Wir sehen allerdings für einen kurzen Moment die von uns definierten Todos, da sie noch als Initialwert gesetzt sind.
+Wir haben allerdings einen kritischen Bug eingebaut, der gut im Netzwerk Tab der Browser Devtools einsehbar ist.
+`useEffect` wird bei jedem Rerender neu getriggert.
+Da unser Effekt jedes mal `setTodos` aufruft und damit ein Rerender triggert, hängen wir in einer Endlosschleife aus Fetch und Rerender.
+
+Quickfix mit Dependency Array:
+
+----
+  useEffect(() => {
+    fetchTodos()
+      .then(setTodos)
+      .catch((e) => console.log(e));
+  }, []);
+----
+
+NOTE: Mit `React.StrictMode` werden Effekte im dev-Mode trotzdem 2x ausgeführt (see https://reactjs.org/docs/strict-mode.html#detecting-unexpected-side-effects).
+
+Richtiger Fix: In der Logik anpassen, dass nur geladen werden muss, wenn noch keine Daten vorliegen.
+Z.B. initiale `todos` auf undefined und Daten werden nur geladen, wenn `todos` nicht undefined sind.
+
+----
+  const [todos, setTodos] = useState<Todo[]>();
+
+  useEffect(() => {
+    if (todos === undefined) {
+      fetchTodos()
+        .then(setTodos)
+        .catch((e) => console.log(e));
+    }
+  }, [todos]);
+----
+
+Da `todos` jetzt `undefined` sein kann, treten wieder Typescript Fehler auf.
+Am einfachsten ist Abfangen über early return:
+
+----
+  if (todos === undefined) {
+    return <CircularProgress />;
+  }
+----
+
+Wir sehen noch für einen kurzen Moment die von uns definierten Todos, da sie noch als Initialwert gesetzt sind.
 Daher werden sie aus dem Initialwert von `useState` entfernt.
 
 ----

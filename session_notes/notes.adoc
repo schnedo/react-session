@@ -96,6 +96,9 @@ export default function App() {
 }
 ----
 
+Dev Server sollte jetzt immer noch weißes Bild zeigen.
+App rendert ein React.Fragment und damit nichts.
+
 Optional: Code Formatter installieren und einrichten.
 
  npm i prettier
@@ -106,29 +109,7 @@ Wir wollen schnell etwas halbwegs Schönes erstellen.
 Deshalb nutzen wir eine Komponentenbibliothek.
 Wir benutzen hier material-ui (https://mui.com/)
 
-  npm install @mui/material @emotion/react @emotion/styled
-
-Komponente `src/todos/TodoList.tsx` erstellen.
-Zuerst ein Dummy für die Listenkomponente selbst:
-
-----
-export default function TodoList() {
-  return <></>;
-}
-----
-
-und in App.tsx anziehen:
-
-----
-import TodoList from "./todos/TodoList";
-
-export default function App() {
-  return <TodoList />;
-}
-----
-
-Dev Server sollte jetzt immer noch weißes Bild zeigen.
-TodoList rendert ein React.Fragment und damit nichts.
+  npm install @mui/material @emotion/react @emotion/styled @mui/icons-material
 
 Wir definieren ein dummy Todo:
 
@@ -143,7 +124,7 @@ const todo = {
 und zeigen etwas in der Liste an:
 
 ----
-export default function TodoList() {
+export default function App() {
   return (
     <List>
       <ListItem>
@@ -157,7 +138,7 @@ export default function TodoList() {
 Fehlt noch eine Anzeige für `todo.completed`:
 
 ----
-export default function TodoList() {
+export default function App() {
   return (
     <List>
       <ListItem secondaryAction={<Checkbox checked={todo.completed} />}>
@@ -191,7 +172,7 @@ const todos = [
 und TodoList anpassen:
 
 ----
-export default function TodoList() {
+export default function App() {
   return (
     <List>
       {todos.map((todo) => (
@@ -213,10 +194,13 @@ Anhand von `key` kann React die verschiedenen Komponenten unterscheiden und ents
 === Hooks
 
 Bisher keine Interaktivität.
+Wir wollen Todos selbst hinzufügen.
 Wir wollen, dass klick auf checkbox den die Aufgabe als abgeschlossen markiert.
 Die Liste braucht Zustand.
 
 ==== useState
+
+===== Add Todo
 
 Hinzufügen von State zu `TodoList.tsx`
 
@@ -237,7 +221,7 @@ const initialTodos = [
   },
 ];
 
-export default function TodoList() {
+export default function App() {
   const [todos, setTodos] = useState(initialTodos);
 
   return (
@@ -255,7 +239,9 @@ export default function TodoList() {
 }
 ----
 
-Wir brauchen noch einen Eventhandler:
+===== Toggle Completed
+
+Wir brauchen einen Eventhandler:
 
 ----
   const handleChange = (index: number) => () => {
@@ -272,7 +258,7 @@ Wir brauchen noch einen Eventhandler:
 
 ==== useEffect
 
-Aktuell sind initiale Todos hart codiert.
+Aktuell sind Todos hart codiert.
 Was, wenn wir die Todos von beim rendern der Liste von einem Backend laden wollen?
 Mithilfe des `useEffect()` Hooks kann das als Seiteneffekt des Renderns der Komponente ausgedrückt werden.
 
@@ -320,7 +306,7 @@ Richtiger Fix: In der Logik anpassen, dass nur geladen werden muss, wenn noch ke
 Z.B. initiale `todos` auf undefined und Daten werden nur geladen, wenn `todos` nicht undefined sind.
 
 ----
-  const [todos, setTodos] = useState<Todo[]>();
+  const [todos, setTodos] = useState();
 
   useEffect(() => {
     if (todos === undefined) {
@@ -331,24 +317,8 @@ Z.B. initiale `todos` auf undefined und Daten werden nur geladen, wenn `todos` n
   }, [todos]);
 ----
 
-Da `todos` jetzt `undefined` sein kann, treten wieder Typescript Fehler auf.
-Am einfachsten ist Abfangen über early return:
-
-----
-  if (todos === undefined) {
-    return <CircularProgress />;
-  }
-----
-
-Wir sehen noch für einen kurzen Moment die von uns definierten Todos, da sie noch als Initialwert gesetzt sind.
-Daher werden sie aus dem Initialwert von `useState` entfernt.
-
-----
-  const [todos, setTodos] = useState([]);
-----
-
-Jetzt sollte sich Typescript beschweren, da der Typ von `todos` nicht mehr inferiert werden kann.
-Daher definieren wir nun ein Interface für Todos:
+Es sollten nun Typescript Fehler entstehen, da der Typ von `todos` nicht mehr inferiert werden kann.
+Daher ist eine Definition von Todo nötig:
 
 ----
 interface Todo {
@@ -358,10 +328,19 @@ interface Todo {
 }
 ----
 
-und setzen es an die entsprechenden Stellen im Code.
+und Einsetzen in die entsprechenden Stellen im Code:
 
 ----
 async function fetchTodos(): Promise<Todo[]> {...}
 ...
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [todos, setTodos] = useState<Todo[]>();
+----
+
+Da `todos` jetzt `undefined` sein kann, treten weitere Typescript Fehler auf.
+Am einfachsten ist Abfangen über early return:
+
+----
+  if (todos === undefined) {
+    return <CircularProgress />;
+  }
 ----

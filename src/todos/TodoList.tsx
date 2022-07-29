@@ -1,21 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Checkbox, List, ListItem, ListItemText } from "@mui/material";
 
-const initialTodos = [
-  {
-    id: 1,
-    title: "Wichtige Dinge tun",
-    completed: true,
-  },
-  {
-    id: 2,
-    title: "Lustige Dinge tun",
-    completed: false,
-  },
-];
+interface Todo {
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+async function fetchTodos(): Promise<Todo[]> {
+  const response = await fetch("https://jsonplaceholder.typicode.com/todos");
+  if (response.ok) {
+    return response.json();
+  }
+  throw Error("response not ok");
+}
 
 export default function TodoList() {
-  const [todos, setTodos] = useState(initialTodos);
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  useEffect(() => {
+    fetchTodos()
+      .then(setTodos)
+      .catch((e) => console.log(e));
+  });
 
   const handleChange = (index: number) => () => {
     const newTodos = [...todos];

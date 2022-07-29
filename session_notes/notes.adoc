@@ -269,3 +269,59 @@ Wir brauchen noch einen Eventhandler:
 ----
             <Checkbox checked={todo.completed} onChange={handleChange(index)} />
 ----
+
+==== useEffect
+
+Aktuell sind initiale Todos hart codiert.
+Was, wenn wir die Todos von beim rendern der Liste von einem Backend laden wollen?
+Mithilfe des `useEffect()` Hooks kann das als Seiteneffekt des Renderns der Komponente ausgedrückt werden.
+
+Zunächst Definition von fetch Funktion:
+
+----
+async function fetchTodos() {
+  const response = await fetch("https://jsonplaceholder.typicode.com/todos");
+  if (response.ok) {
+    return response.json();
+  }
+  throw Error("response not ok");
+}
+----
+
+Und als Seiteneffekt einbinden:
+
+----
+  useEffect(() => {
+    fetchTodos()
+      .then(setTodos)
+      .catch((e) => console.log(e));
+  });
+----
+
+Jetzt sollten beim Rendern der Komponente die Todos vom Backend geladen werden.
+
+Wir sehen allerdings für einen kurzen Moment die von uns definierten Todos, da sie noch als Initialwert gesetzt sind.
+Daher werden sie aus dem Initialwert von `useState` entfernt.
+
+----
+  const [todos, setTodos] = useState([]);
+----
+
+Jetzt sollte sich Typescript beschweren, da der Typ von `todos` nicht mehr inferiert werden kann.
+Daher definieren wir nun ein Interface für Todos:
+
+----
+interface Todo {
+  id: number;
+  title: string;
+  completed: boolean;
+}
+----
+
+und setzen es an die entsprechenden Stellen im Code.
+
+----
+async function fetchTodos(): Promise<Todo[]> {...}
+...
+  const [todos, setTodos] = useState<Todo[]>([]);
+----
